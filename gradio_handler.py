@@ -61,7 +61,4 @@ def gradio_main():
         image_input.change(fn=greet_and_upload, inputs=image_input, outputs=final_message_output, show_progress='minimal')
 
     # Запускаем интерфейс
-    iface.launch(max_file_size='6mb', server_name='0.0.0.0', server_port=7861)
-
-
-gradio_main()
+    iface.launch(max_file_size='10mb', server_name='0.0.0.0', server_port=7861)
