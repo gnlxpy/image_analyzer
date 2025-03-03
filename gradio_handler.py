@@ -30,7 +30,7 @@ def greet_and_upload(image):
     image.save(save_path, "JPEG")
 
     # Шаг 2: Анализ изображения с помощью OpenAI
-    time.sleep(0.5)
+    time.sleep(1)
     yield "### 🤖 Анализируем изображение..."
     image_description = ai_generate_answer(f'{settings.API_URL}/{filename}')
     image_description += f'\nhttp://{settings.API_URL}/{filename}'
@@ -42,7 +42,7 @@ def greet_and_upload(image):
     except Exception as e:
         print(e)
     # Возвращаем сообщение о загрузке, которое сразу обновится
-    return image_description
+    yield image_description
 
 
 def gradio_main():
