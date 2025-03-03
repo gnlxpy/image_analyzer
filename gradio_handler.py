@@ -53,7 +53,7 @@ def gradio_main():
         image_input = gr.Image(type="pil", label="Загрузите изображение")
 
         # Вывод сообщения о загрузке и анализа изображения
-        final_message_output = gr.Textbox(label="Результат", interactive=False)
+        final_message_output = gr.Markdown(label="Результат", interactive=False)
 
         # Соединяем компоненты с функцией
         image_input.change(fn=greet_and_upload, inputs=image_input, outputs=final_message_output, show_progress='minimal')
