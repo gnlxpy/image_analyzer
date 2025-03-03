@@ -8,7 +8,7 @@ class Settings(BaseSettings):
 
     @property
     def API_URL(self):
-        return f"http://{self.HOST}/images"
+        return f"http://{self.HOST}:8000/images"
 
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 

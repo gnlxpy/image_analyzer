@@ -52,7 +52,3 @@ def gradio_main():
 
     # Запускаем интерфейс
     iface.launch(max_file_size='6mb', server_name='0.0.0.0', server_port=7861)
-
-
-if __name__ == '__main__':
-    gradio_main()

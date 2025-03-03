@@ -1,8 +1,8 @@
 from common import run_threaded
-import gradio_handler
-import storage_handler
+from gradio_handler import gradio_main
+from storage_handler import fastapi_main
 
 
 if __name__ == '__main__':
-    run_threaded(storage_handler)
-    run_threaded(gradio_handler)
+    run_threaded(fastapi_main())
+    run_threaded(gradio_main())
