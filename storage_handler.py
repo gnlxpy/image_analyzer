@@ -21,4 +21,4 @@ async def get_image(file: str):
 
 
 def fastapi_main():
-    uvicorn.run("storage_handler:app", use_colors=True, workers=4, host='0.0.0.0', port=8000)
+    uvicorn.run("storage_handler:app", use_colors=True, host='0.0.0.0', port=8000)
