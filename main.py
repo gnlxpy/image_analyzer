@@ -4,5 +4,5 @@ from storage_handler import fastapi_main
 
 
 if __name__ == '__main__':
-    run_threaded(fastapi_main())
     run_threaded(gradio_main())
+    run_threaded(fastapi_main())
