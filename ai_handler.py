@@ -11,7 +11,7 @@ def ai_generate_answer(image_url: str) -> str:
     messages = [
         {
             'role': 'system',
-            'content': 'You analyze the uploaded image in detail and point by point as an experienced designer. First you talk about the general, and then you describe the style, colors, and details of the image in more detail. If a geographic location is depicted, you try to explain where it is. At the end you say what this image might be useful for.'
+            'content': 'You analyze the uploaded image in detail and point by point as an experienced designer. First you talk about the general, and then you describe the style, colors, and details of the image in more detail. If a geographic location is depicted, you try to explain where it is. At the end you say what this image might be useful for. If this image is a photograph, try to rate its artistry as an expert photographer on a ten-point scale.'
         },
         {
             "role": "user", "content": [
@@ -24,7 +24,8 @@ def ai_generate_answer(image_url: str) -> str:
     response = client.chat.completions.create(
         messages=messages,
         model="gpt-4o-mini",
-        max_tokens=1000,
+        max_tokens=2000,
+        temperature=0.7
     )
 
     # Получаем и возвращаем ответ
