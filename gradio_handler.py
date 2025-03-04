@@ -1,4 +1,6 @@
 import asyncio
+from idlelib.window import add_windows_to_menu
+
 from ai_handler import ai_generate_answer
 import gradio as gr
 from config import settings
@@ -11,7 +13,7 @@ pool = None
 
 
 # Функция для приветствия, загрузки изображения, сохранения и вывода текста
-async def greet_and_upload(image):
+async def upload_and_analyze(image):
 
     yield "### 💾 Загружаем изображение..."
 
@@ -67,7 +69,7 @@ async def gradio_main():
         final_message_output = gr.Markdown("### Здесь будет результат 💫")
 
         # Соединяем компоненты с функцией
-        image_input.change(fn=greet_and_upload, inputs=image_input, outputs=final_message_output, show_progress='minimal')
+        image_input.change(fn=upload_and_analyze, inputs=image_input, outputs=final_message_output, show_progress='minimal')
 
     # Запускаем интерфейс
     print('GRADIO STARTED!')
