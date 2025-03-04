@@ -1,4 +1,3 @@
-import asyncio
 import traceback
 import asyncpg
 from config import settings
@@ -7,16 +6,22 @@ import datetime
 
 
 class ResultAnalyzer(BaseModel):
-    image_url: HttpUrl
-    description: str = Field(min_length=30, max_length=5000)
-    dt: datetime.datetime = Field(default_factory=datetime.datetime.now)
+    """
+    Модель результата анализа для БД
+    """
+    image_url: HttpUrl = Field(description='Ссылка на изображение')
+    description: str = Field(min_length=30, max_length=5000, description='Описание')
+    dt: datetime.datetime = Field(default_factory=datetime.datetime.now, description='отпечаток с датой и временем')
 
 
 async def init_pg():
     """
-    Инициализация БД Постгрес
+    Инициализация соединения БД Постгрес
     """
     try:
+        if len(settings.PG_USER) < 2:
+            print('Pg off')
+            return False
         conn = await asyncpg.connect(settings.PG_URL)
         return conn
     except Exception:
@@ -27,6 +32,11 @@ class Pg:
 
     @staticmethod
     async def add_result(result: ResultAnalyzer) -> bool:
+        """
+        Функция добавления строки в БД с ссылкой, описанием и отпечатком времени
+        :param result: результат анализа для добавления
+        :return: bool
+        """
         try:
             conn = await init_pg()
             if not conn:

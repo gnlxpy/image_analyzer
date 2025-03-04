@@ -2,53 +2,53 @@ import asyncio
 from ai_handler import ai_generate_answer
 import gradio as gr
 from config import settings
-from common import generate_filename
+from common import generate_filename, set_width_height
 from sql_handler import Pg, ResultAnalyzer
 
 
-# Функция для приветствия, загрузки изображения, сохранения и вывода текста
-async def upload_and_analyze(image):
+async def upload_and_analyze(image, max_size: int = 1000):
+    """
+    Основная функция ресайза, сохранения, анализа фотографии
+    :param max_size: максимальный размер по большей стороне
+    :param image: объект изображения
+    :return: генерация текстов
+    """
     yield "### 💾 Загружаем изображение..."
 
     # Проверка размера изображения и уменьшение, если необходимо
-    max_size = 1000
     width, height = image.size
-    if width > max_size or height > max_size:
-        if width > height:
-            new_width = max_size
-            new_height = int((max_size / width) * height)
-        else:
-            new_height = max_size
-            new_width = int((max_size / height) * width)
-
+    resize, new_width, new_height = set_width_height(width, height, max_size)
+    if resize:
         image = image.resize((new_width, new_height))
 
     # генерируем имя файла
     filename = generate_filename(8) + '.jpg'
     # Сохраняем изображение в формате JPEG
-    save_path = f"./images/{filename}"
-    image.save(save_path, "JPEG")
+    image.save(f"./images/{filename}", "JPEG")
+    await asyncio.sleep(1)
 
     # Шаг 2: Анализ изображения с помощью OpenAI
-    await asyncio.sleep(1)
     yield "### 🤖 Анализируем изображение..."
 
     image_url = f'{settings.API_URL}/{filename}'
     image_description = await ai_generate_answer(image_url)
+    if image_description:
+        # добавляем результат в БД
+        await Pg.add_result(ResultAnalyzer(
+            image_url=image_url,
+            description=image_description
+        ))
 
-    # добавляем результат в БД
-    await Pg.add_result(ResultAnalyzer(
-        image_url=image_url,
-        description=image_description
-    ))
-
-    image_description += f'\n{image_url}'
-
-    # Возвращаем сообщение о загрузке, которое сразу обновится
-    yield image_description
+        # Возвращаем сообщение с описанием
+        yield image_description + f'\n{image_url}'
+    else:
+        yield "### 😢 К сожалению произошла ошибка"
 
 
 async def gradio_main():
+    """
+    Основная функция создания интерфейса
+    """
     # Создаем блоки с компонентами
     with gr.Blocks() as iface:
         # Приветствие
