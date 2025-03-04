@@ -4,6 +4,10 @@ import gradio as gr
 from config import settings
 from common import generate_filename
 from sql_handler import Pg, ResultAnalyzer
+from sql_handler import init_pg, close_pg
+
+
+pool = None
 
 
 # Функция для приветствия, загрузки изображения, сохранения и вывода текста
@@ -49,7 +53,8 @@ async def greet_and_upload(image):
     yield image_description
 
 
-def gradio_main():
+async def gradio_main():
+    await init_pg()
     # Создаем блоки с компонентами
     with gr.Blocks() as iface:
         # Приветствие
@@ -67,3 +72,4 @@ def gradio_main():
     # Запускаем интерфейс
     print('GRADIO STARTED!')
     iface.launch(max_file_size='10mb', server_name='0.0.0.0', server_port=7861)
+    await close_pg()

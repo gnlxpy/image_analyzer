@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     OPENAI_SYSTEM: str
     PG_USER: str
     PG_PSW: str
+    PG_HOST: str
 
     @property
     def API_URL(self):
@@ -15,7 +16,7 @@ class Settings(BaseSettings):
 
     @property
     def PG_URL(self):
-        return f'postgresql://{self.PG_USER}:{self.PG_PSW}@localhost:5432/postgres'
+        return f'postgresql://{self.PG_USER}:{self.PG_PSW}@{self.PG_HOST}:5432/postgres'
 
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 

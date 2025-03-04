@@ -16,6 +16,7 @@ async def init_pg():
     Инициализация БД Постгрес
     :return: глобальная переменная с соединением
     """
+    print('PG connected!')
     global pool
     pool = await asyncpg.create_pool(settings.PG_URL, min_size=1, max_size=5)
     return pool
@@ -25,6 +26,7 @@ async def close_pg():
     """
     Закрытие соединения
     """
+    print('PG closed!')
     await pool.close()
 
 
