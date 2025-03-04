@@ -31,4 +31,4 @@ async def get_image(file: str):
 
 def fastapi_main():
     print('FASTAPI STARTED!')
-    uvicorn.run("fastapi_handler:app", host='0.0.0.0', port=8000)
+    uvicorn.run("fastapi_serve:app", host='0.0.0.0', port=8000)
