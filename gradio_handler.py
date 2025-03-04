@@ -34,7 +34,7 @@ async def greet_and_upload(image):
     await asyncio.sleep(1)
     yield "### 🤖 Анализируем изображение..."
 
-    image_url = f'http://{settings.API_URL}/{filename}'
+    image_url = f'{settings.API_URL}/{filename}'
     image_description = await ai_generate_answer(image_url)
 
     # добавляем результат в БД
