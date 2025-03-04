@@ -11,14 +11,14 @@ class ResultAnalyzer(BaseModel):
     dt: datetime.datetime = Field(default_factory=datetime.datetime.now)
 
 
-async def init_pg():
+async def init_pg(loop):
     """
     Инициализация БД Постгрес
     :return: глобальная переменная с соединением
     """
     print('PG connected!')
     global pool
-    pool = await asyncpg.create_pool(settings.PG_URL)
+    pool = await asyncpg.create_pool(settings.PG_URL, loop=loop)
     return pool
 
 
