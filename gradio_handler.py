@@ -55,6 +55,8 @@ async def upload_and_analyze(image):
 
 
 async def gradio_main():
+    global pool
+    pool = await init_pg()
     # Создаем блоки с компонентами
     with gr.Blocks() as iface:
         # Приветствие
@@ -72,3 +74,4 @@ async def gradio_main():
     # Запускаем интерфейс
     print('GRADIO STARTED!')
     iface.launch(max_file_size='10mb', server_name='0.0.0.0', server_port=7861)
+    await close_pg()
