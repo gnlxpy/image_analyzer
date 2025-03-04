@@ -1,6 +1,4 @@
 import asyncio
-from idlelib.window import add_windows_to_menu
-
 from ai_handler import ai_generate_answer
 import gradio as gr
 from config import settings
