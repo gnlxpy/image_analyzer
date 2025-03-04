@@ -4,10 +4,6 @@ import gradio as gr
 from config import settings
 from common import generate_filename
 from sql_handler import Pg, ResultAnalyzer
-from sql_handler import init_pg, close_pg
-
-
-pool = None
 
 
 # Функция для приветствия, загрузки изображения, сохранения и вывода текста
@@ -67,10 +63,6 @@ async def gradio_main():
         # Соединяем компоненты с функцией
         image_input.change(fn=upload_and_analyze, inputs=image_input, outputs=final_message_output, show_progress='minimal')
 
-    global pool
-    loop = asyncio.get_event_loop()
-    pool = await init_pg(loop)
     # Запускаем интерфейс
     print('GRADIO STARTED!')
     iface.launch(max_file_size='10mb', server_name='0.0.0.0', server_port=7861)
-    await close_pg()

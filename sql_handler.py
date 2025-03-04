@@ -1,3 +1,4 @@
+import asyncio
 import traceback
 import asyncpg
 from config import settings
@@ -11,23 +12,15 @@ class ResultAnalyzer(BaseModel):
     dt: datetime.datetime = Field(default_factory=datetime.datetime.now)
 
 
-async def init_pg(loop):
+async def init_pg():
     """
     Инициализация БД Постгрес
-    :return: глобальная переменная с соединением
     """
-    print('PG connected!')
-    global pool
-    pool = await asyncpg.create_pool(settings.PG_URL, loop=loop)
-    return pool
-
-
-async def close_pg():
-    """
-    Закрытие соединения
-    """
-    print('PG closed!')
-    await pool.close()
+    try:
+        conn = await asyncpg.connect(settings.PG_URL)
+        return conn
+    except Exception:
+        return False
 
 
 class Pg:
@@ -35,18 +28,22 @@ class Pg:
     @staticmethod
     async def add_result(result: ResultAnalyzer) -> bool:
         try:
-            async with pool.acquire() as conn:
-                r = await conn.fetch(
-                    '''
-                    INSERT INTO image_analyzer (image_url, description, dt)
-                    VALUES ($1, $2, $3)
-                    RETURNING id;
-                    ''',
-                    str(result.image_url),
-                    result.description,
-                    result.dt
-                )
-                return True if r else False
+            conn = await init_pg()
+            if not conn:
+                print('Pg bad connection')
+                return False
+            r = await conn.fetch(
+                '''
+                INSERT INTO image_analyzer (image_url, description, dt)
+                VALUES ($1, $2, $3)
+                RETURNING id;
+                ''',
+                str(result.image_url),
+                result.description,
+                result.dt
+            )
+            await conn.close()
+            return True if r else False
         except Exception:
             traceback.print_exc()
             return False
