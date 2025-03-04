@@ -1,17 +1,17 @@
-from openai import OpenAI
+from openai import AsyncOpenAI
 from config import settings
 
 
-def ai_generate_answer(image_url: str) -> str:
+async def ai_generate_answer(image_url: str) -> str:
     """
     Функция для генерации ответа с использованием GPT-4
     """
     # инициализация ИИ
-    client = OpenAI(api_key=settings.OPENAI_TOKEN)
+    client = AsyncOpenAI(api_key=settings.OPENAI_TOKEN)
     messages = [
         {
             'role': 'system',
-            'content': 'You analyze the uploaded image in detail and point by point as an experienced designer. First you talk about the general, and then you describe the style, colors, and details of the image in more detail. If a geographic location is depicted, you try to explain where it is. At the end you say what this image might be useful for. If this image is a photograph, try to rate its artistry as an expert photographer on a ten-point scale.'
+            'content': settings.OPENAI_SYSTEM
         },
         {
             "role": "user", "content": [
@@ -21,11 +21,11 @@ def ai_generate_answer(image_url: str) -> str:
     ]
 
     # отправляем запрос
-    response = client.chat.completions.create(
+    response = await client.chat.completions.create(
         messages=messages,
-        model="gpt-4o-mini",
+        model="gpt-4o",
         max_tokens=2000,
-        temperature=0.7
+        temperature=0.5
     )
 
     # Получаем и возвращаем ответ

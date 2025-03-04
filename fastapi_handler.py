@@ -1,19 +1,30 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Query, HTTPException, status as fastapi_status
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 import os
+from sql_handler import init_pg, close_pg
+
+# Глобальная переменная для пула соединений
+pool = None
 
 
 app = FastAPI()
 app.mount('/images', StaticFiles(directory='images'), name='images')
 
 
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    global pool
+    pool = await init_pg()
+    yield
+    await close_pg()
+
+
 @app.get("/images/{file}")
 async def get_image(file: str):
-    print(file)
     files = os.listdir('./images')
-    print(files)
     if file in files:
         return FileResponse(f"./images/{file}", media_type="image/jpg")
     else:
@@ -21,4 +32,5 @@ async def get_image(file: str):
 
 
 def fastapi_main():
-    uvicorn.run("storage_handler:app", use_colors=True, host='0.0.0.0', port=8000)
+    print('FASTAPI STARTED!')
+    uvicorn.run("fastapi_handler:app", host='0.0.0.0', port=8000)

@@ -1,6 +1,6 @@
 from common import run_threaded
 from gradio_handler import gradio_main
-from storage_handler import fastapi_main
+from fastapi_handler import fastapi_main
 
 
 if __name__ == '__main__':

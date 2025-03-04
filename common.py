@@ -8,6 +8,5 @@ def generate_filename(length: int) -> str:
 
 
 def run_threaded(target, *args, **kwargs):
-    thread = threading.Thread(target=target, args=args, kwargs=kwargs)
-    thread.start()
+    thread = threading.Thread(target=target, args=args, kwargs=kwargs, daemon=True).start()
     return thread

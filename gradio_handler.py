@@ -1,16 +1,16 @@
-import datetime
-import time
-
+import asyncio
 from ai_handler import ai_generate_answer
 import gradio as gr
 from config import settings
 from common import generate_filename
-import threading
+from sql_handler import Pg, ResultAnalyzer
 
 
 # Функция для приветствия, загрузки изображения, сохранения и вывода текста
-def greet_and_upload(image):
+async def greet_and_upload(image):
+
     yield "### 💾 Загружаем изображение..."
+
     # Проверка размера изображения и уменьшение, если необходимо
     max_size = 1000
     width, height = image.size
@@ -24,23 +24,27 @@ def greet_and_upload(image):
 
         image = image.resize((new_width, new_height))
 
+    # генерируем имя файла
     filename = generate_filename(8) + '.jpg'
     # Сохраняем изображение в формате JPEG
     save_path = f"./images/{filename}"
     image.save(save_path, "JPEG")
 
     # Шаг 2: Анализ изображения с помощью OpenAI
-    time.sleep(1)
+    await asyncio.sleep(1)
     yield "### 🤖 Анализируем изображение..."
-    image_description = ai_generate_answer(f'{settings.API_URL}/{filename}')
-    image_description += f'\nhttp://{settings.API_URL}/{filename}'
 
-    try:
-        with open('./descriptions_logs.txt', 'r+') as f:
-            f.read()
-            f.write(f'\n{datetime.datetime.now()}\n{image_description}')
-    except Exception as e:
-        print(e)
+    image_url = f'http://{settings.API_URL}/{filename}'
+    image_description = await ai_generate_answer(image_url)
+
+    # добавляем результат в БД
+    await Pg.add_result(ResultAnalyzer(
+        image_url=image_url,
+        description=image_description
+    ))
+
+    image_description += f'\n{image_url}'
+
     # Возвращаем сообщение о загрузке, которое сразу обновится
     yield image_description
 
@@ -61,4 +65,5 @@ def gradio_main():
         image_input.change(fn=greet_and_upload, inputs=image_input, outputs=final_message_output, show_progress='minimal')
 
     # Запускаем интерфейс
+    print('GRADIO STARTED!')
     iface.launch(max_file_size='10mb', server_name='0.0.0.0', server_port=7861)
