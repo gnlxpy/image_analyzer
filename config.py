@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     @property
     def PG_URL(self):
-        return f'postgresql://{self.PG_USER}:{self.PG_PSW}@127.0.0.1:5432/postgres'
+        return f'postgresql://{self.PG_USER}:{self.PG_PSW}@localhost:5432/postgres'
 
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
