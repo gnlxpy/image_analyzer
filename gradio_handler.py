@@ -12,7 +12,6 @@ pool = None
 
 # Функция для приветствия, загрузки изображения, сохранения и вывода текста
 async def upload_and_analyze(image):
-
     yield "### 💾 Загружаем изображение..."
 
     # Проверка размера изображения и уменьшение, если необходимо
@@ -41,11 +40,13 @@ async def upload_and_analyze(image):
     image_url = f'{settings.API_URL}/{filename}'
     image_description = await ai_generate_answer(image_url)
 
+    await init_pg()
     # добавляем результат в БД
     await Pg.add_result(ResultAnalyzer(
         image_url=image_url,
         description=image_description
     ))
+    await close_pg()
 
     image_description += f'\n{image_url}'
 
@@ -54,7 +55,6 @@ async def upload_and_analyze(image):
 
 
 async def gradio_main():
-    await init_pg()
     # Создаем блоки с компонентами
     with gr.Blocks() as iface:
         # Приветствие
@@ -72,4 +72,3 @@ async def gradio_main():
     # Запускаем интерфейс
     print('GRADIO STARTED!')
     iface.launch(max_file_size='10mb', server_name='0.0.0.0', server_port=7861)
-    await close_pg()

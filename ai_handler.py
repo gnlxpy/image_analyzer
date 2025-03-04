@@ -24,8 +24,7 @@ async def ai_generate_answer(image_url: str) -> str:
     response = await client.chat.completions.create(
         messages=messages,
         model="gpt-4o-mini",
-        max_tokens=2000,
-        temperature=0.7
+        max_tokens=3000,
     )
 
     # Получаем и возвращаем ответ

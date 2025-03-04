@@ -18,7 +18,7 @@ async def init_pg():
     """
     print('PG connected!')
     global pool
-    pool = await asyncpg.create_pool(settings.PG_URL, min_size=1, max_size=5)
+    pool = await asyncpg.create_pool(settings.PG_URL)
     return pool
 
 
