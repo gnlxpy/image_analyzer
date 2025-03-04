@@ -40,13 +40,11 @@ async def upload_and_analyze(image):
     image_url = f'{settings.API_URL}/{filename}'
     image_description = await ai_generate_answer(image_url)
 
-    await init_pg()
     # добавляем результат в БД
     await Pg.add_result(ResultAnalyzer(
         image_url=image_url,
         description=image_description
     ))
-    await close_pg()
 
     image_description += f'\n{image_url}'
 
